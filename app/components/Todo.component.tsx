@@ -1,6 +1,6 @@
 "use client";
 import AddToDo from "./AddToDo.component";
-import { useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { todoReducer, initialState } from "../redux/reducers";
 import TodoList from "./TodoList.component";
 import { collection, getDocs } from "firebase/firestore";
@@ -27,27 +27,33 @@ export const Todo = () => {
     </div>
   );
 
+  const queryFireBaseCollection = useCallback(async () => {
+    const querySnapshot = await getDocs(todoCollectionRef);
+    const data = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+    return data;
+  }, []);
+
+  const setData = (dispatch: any, newState: any) => {
+    dispatch({
+      type: "SET",
+      payload: newState,
+    });
+  };
+
   useEffect(() => {
     //Get data
     const getTodos = async () => {
       try {
         setIsLoading(true);
-        const querySnapshot = await getDocs(todoCollectionRef);
-
-        const data = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-        }));
 
         const newState = {
           ...initialState,
-          todos: data,
+          todos: await queryFireBaseCollection(),
         };
 
-        dispatch({
-          type: "SET",
-          payload: newState,
-        });
-
+        setData(dispatch, newState);
       } catch (e) {
         console.log(e);
       } finally {
@@ -60,7 +66,7 @@ export const Todo = () => {
 
   return (
     <div className="w-[50vw] p-4">
-      <AddToDo dispatch={dispatch} todoCollectionRef={todoCollectionRef}/>
+      <AddToDo dispatch={dispatch} todoCollectionRef={todoCollectionRef} />
       <div className="border-2 h-[5px] border-zinc-800"></div>
       {/* TO-DO-LIST */}
       {renderData}
