@@ -28,7 +28,7 @@ const TodoList = (props: IProps) => {
         todos.map((todo: IPayloadTodo) => (
           <TodoItem
             name={todo?.name?.toUpperCase() || ""}
-            id={todo.id}
+            id={todo.id || ""}
             dispatch={dispatch}
             key={todo.id}
           />
