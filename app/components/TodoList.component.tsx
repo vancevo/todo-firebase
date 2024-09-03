@@ -29,6 +29,7 @@ const TodoList = (props: IProps) => {
           <TodoItem
             name={todo?.name?.toUpperCase() || ""}
             id={todo.id || ""}
+            isChecked={todo.isChecked || false}
             dispatch={dispatch}
             key={todo.id}
           />

@@ -28,8 +28,8 @@ const AddToDo = (props: IProps) => {
 
   const handleSubmit = async (event: { todo: string }) => {
     try {
-      const newId =  nanoid();
-      const todoDocRef = doc(props.todoCollectionRef, newId)
+      const newId = nanoid();
+      const todoDocRef = doc(props.todoCollectionRef, newId);
 
       await setDoc(todoDocRef, {
         id: newId,
@@ -41,6 +41,7 @@ const AddToDo = (props: IProps) => {
         payload: {
           id: newId,
           name: event.todo,
+          isChecked: false,
         },
       });
       setValue("");

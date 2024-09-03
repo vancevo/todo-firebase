@@ -4,22 +4,30 @@ import { Button, Form, Input } from "antd";
 import type { IPayloadTodo } from "./type";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase-config";
+import { Checkbox } from "antd";
 
 interface IProps {
   id: string;
   name: string;
+  isChecked: boolean;
   dispatch: ({
     type,
     payload,
   }: {
     type: string;
-    payload: IPayloadTodo;
+    payload: IPayloadTodo | any;
   }) => void;
 }
 
-const TodoItem = ({ id, name, dispatch }: IProps) => {
+const TodoItem = ({ id, name, isChecked, dispatch }: IProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [value, setValue] = useState(name);
+  const [isCheckValue, setIsCheckValue] = useState(isChecked);
+
+  const onCheck = async (e: any, id: string) => {
+    setIsCheckValue(e.target.checked);
+    await mutationDoc(id, value, e.target.checked);
+  };
 
   const handleDeleted = async (id: string) => {
     try {
@@ -42,20 +50,30 @@ const TodoItem = ({ id, name, dispatch }: IProps) => {
     }
   };
 
+  const mutationDoc = async (
+    id: string,
+    value: string,
+    isCheckValue: boolean
+  ) => {
+    const todoDoc = doc(db, "todos", id);
+    await updateDoc(todoDoc, {
+      name: value,
+      isChecked: isCheckValue,
+    });
+  };
+
   const handleSave = async (id: string) => {
     if (!value) {
       return;
     }
     try {
-      const todoDoc = doc(db, "todos", id);
-      await updateDoc(todoDoc, {
-        name: value,
-      });
+      await mutationDoc(id, value, isCheckValue);
       dispatch({
         type: "EDIT",
         payload: {
           id,
           name: value,
+          isChecked: isCheckValue,
         },
       });
 
@@ -67,10 +85,14 @@ const TodoItem = ({ id, name, dispatch }: IProps) => {
 
   const viewTodoTemplate = (
     <div id={id} className="my-4">
-      <div className="flex justify-between">
-        <p>
-          {name}
-        </p>
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2">
+          <Checkbox
+            onChange={(e) => onCheck(e, id)}
+            checked={isCheckValue}
+          ></Checkbox>
+          <p className={isCheckValue ? "line-through" : ""}>{name}</p>
+        </div>
         <div className="flex gap-2">
           <Button type="primary" danger onClick={() => handleDeleted(id)}>
             Delete
