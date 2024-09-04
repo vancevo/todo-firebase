@@ -5,11 +5,14 @@ import type { IPayloadTodo } from "./type";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase-config";
 import { Checkbox } from "antd";
+import dayjs from "dayjs";
 
 interface IProps {
   id: string;
   name: string;
   isChecked: boolean;
+
+  createdAt: string | Date;
   dispatch: ({
     type,
     payload,
@@ -19,10 +22,12 @@ interface IProps {
   }) => void;
 }
 
-const TodoItem = ({ id, name, isChecked, dispatch }: IProps) => {
+const TodoItem = ({ id, name, isChecked, createdAt, dispatch }: IProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [value, setValue] = useState(name);
   const [isCheckValue, setIsCheckValue] = useState(isChecked);
+
+  const datedTodo = createdAt
 
   const onCheck = async (e: any, id: string) => {
     setIsCheckValue(e.target.checked);
@@ -59,6 +64,7 @@ const TodoItem = ({ id, name, isChecked, dispatch }: IProps) => {
     await updateDoc(todoDoc, {
       name: value,
       isChecked: isCheckValue,
+      createdAt: dayjs(new Date()).format("DD/MM/YYYY"),
     });
   };
 
@@ -74,6 +80,7 @@ const TodoItem = ({ id, name, isChecked, dispatch }: IProps) => {
           id,
           name: value,
           isChecked: isCheckValue,
+          createdAt: dayjs(new Date()).format("DD/MM/YYYY"),
         },
       });
 
@@ -91,7 +98,9 @@ const TodoItem = ({ id, name, isChecked, dispatch }: IProps) => {
             onChange={(e) => onCheck(e, id)}
             checked={isCheckValue}
           ></Checkbox>
-          <p className={isCheckValue ? "line-through" : ""}>{name}</p>
+          <p className={isCheckValue ? "line-through" : ""}>
+            {name} - {datedTodo}
+          </p>
         </div>
         <div className="flex gap-2">
           <Button type="primary" danger onClick={() => handleDeleted(id)}>

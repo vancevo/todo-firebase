@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { IPayloadTodo } from "./type";
 import { useDebouncedCallback } from "use-debounce";
 import { addDoc, doc, setDoc } from "firebase/firestore";
+import dayjs from "dayjs";
 
 interface IProps {
   todoCollectionRef: any;
@@ -20,10 +21,6 @@ interface IProps {
 
 const AddToDo = (props: IProps) => {
   const [value, setValue] = useState("");
-  const debounced = useDebouncedCallback((value) => {
-    setValue(value);
-  }, 100);
-
   const { dispatch } = props;
 
   const handleSubmit = async (event: { todo: string }) => {
@@ -35,6 +32,7 @@ const AddToDo = (props: IProps) => {
         id: newId,
         name: event.todo,
         isChecked: false,
+        createdAt: dayjs(new Date()).format("DD/MM/YYYY"),
       });
       dispatch({
         type: "ADD",
@@ -42,6 +40,7 @@ const AddToDo = (props: IProps) => {
           id: newId,
           name: event.todo,
           isChecked: false,
+          createdAt: dayjs(new Date()).format("DD/MM/YYYY"),
         },
       });
       setValue("");
@@ -64,7 +63,7 @@ const AddToDo = (props: IProps) => {
               placeholder="Add to do..."
               className="w-[100%] flex-1"
               value={value}
-              onChange={(e) => debounced(e.target.value)}
+              onChange={(e) => setValue(e.target.value)}
             />
             <Button type="primary" htmlType="submit">
               Add

@@ -18,10 +18,6 @@ interface IProps {
 const TodoList = (props: IProps) => {
   const { dispatch, todos } = props;
 
-  useEffect(() => {
-    console.log("render TodoList");
-  });
-
   return (
     <div className="mt-4 h-[500px] overflow-y-scroll px-4">
       {todos.length ? (
@@ -30,6 +26,7 @@ const TodoList = (props: IProps) => {
             name={todo?.name?.toUpperCase() || ""}
             id={todo.id || ""}
             isChecked={todo.isChecked || false}
+            createdAt={todo.createdAt || ""}
             dispatch={dispatch}
             key={todo.id}
           />

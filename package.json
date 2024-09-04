@@ -9,13 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "antd": "^5.20.3",
+    "chart.js": "^4.4.4",
+    "dayjs": "^1.11.13",
     "firebase": "^10.13.1",
     "firebase-tools": "^13.16.0",
     "lodash": "^4.17.21",
     "nanoid": "^5.0.7",
     "next": "14.2.7",
     "react": "^18",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "use-debounce": "^10.0.3"
   },
